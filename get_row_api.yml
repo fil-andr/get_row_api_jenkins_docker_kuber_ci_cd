@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: get-row-api
+spec:
+  selector:
+    matchLabels:
+      app: get-row-api
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: get-row-api
+    spec:
+      containers:
+        - image: 239534/get_row_api:tagVersion
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "20Mi"
+          name: get-row-api
+          livenessProbe:
+            httpGet:
+              path: /1
+              port: 5000
+            initialDelaySeconds: 15
+          ports:
+            - containerPort: 5000
