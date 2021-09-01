@@ -14,7 +14,7 @@ pipeline {
         }
         stage ('build docker image'){
             steps{
-                sh 'cd /var/lib/jenkins/workspace/get_row_api_kuber/ && docker build -t 239534/get_row_api:v${BUILD_NUMBER} -f dockerfile_get_row_api .'
+                sh 'cd /var/lib/jenkins/workspace/get_row_api_kubernetes/ && docker build -t 239534/get_row_api:v${BUILD_NUMBER} -f dockerfile_get_row_api .'
             }
         }
         stage ('push image to docker registry'){
