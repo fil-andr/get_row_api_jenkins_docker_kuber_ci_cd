@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage ('clone from git repo'){
             steps{
-                git 'https://github.com/fil-andr/get_row_api_test.git'
+                git 'https://github.com/fil-andr/get_row_api_jenkins_docker_kuber_ci_cd.git'
             }
         }
         stage ('unit tests'){
