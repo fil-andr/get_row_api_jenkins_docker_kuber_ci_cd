@@ -1,5 +1,9 @@
 pipeline {
     agent { label 'master' }
+    environment {
+        VENV_DIR = "/docker_test/venv_jenkins"
+        JENKINS_MANIFEST_KUBER_HOST = "/kuber_manifests/jenkins_manifests/get_row_api"
+    }
     triggers {pollSCM('* * * * *')}
     stages {
         stage ('clone from git repo'){
@@ -9,7 +13,7 @@ pipeline {
         }
         stage ('unit tests'){
            steps{
-                sh 'cd /docker_test/venv_jenkins && source venv_jenkins/bin/activate && pytest ${WORKSPACE}/app/tests.py -v'
+                sh 'cd ${VENV_DIR} && source venv_jenkins/bin/activate && pytest ${WORKSPACE}/app/tests.py -v'
            }
         }
         stage ('build docker image'){
@@ -27,16 +31,16 @@ pipeline {
         }
         stage ('kubernetes deploy new ver.'){
             steps{
-                sh 'scp ${WORKSPACE}/get_row_api.yml root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
-                sh 'scp ${WORKSPACE}/tag_ver_replace.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
-                sh 'ssh root@192.168.0.42 /usr/bin/bash /kuber_manifests/jenkins_manifests/get_row_api/tag_ver_replace.sh v${BUILD_NUMBER}'
-                sh 'ssh root@192.168.0.42 kubectl apply -f /kuber_manifests/jenkins_manifests/get_row_api/get_row_api.yml'
+                sh 'scp ${WORKSPACE}/get_row_api.yml root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
+                sh 'scp ${WORKSPACE}/tag_ver_replace.sh root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
+                sh 'ssh root@192.168.0.42 /usr/bin/bash ${JENKINS_MANIFEST_KUBER_HOST}/tag_ver_replace.sh v${BUILD_NUMBER}'
+                sh 'ssh root@192.168.0.42 kubectl apply -f ${JENKINS_MANIFEST_KUBER_HOST}/get_row_api.yml'
             }
         }
         stage ('application health test'){
             steps{
-                sh 'scp ${WORKSPACE}/app_health_check.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
-                sh 'ssh root@192.168.0.42 /usr/bin/bash /kuber_manifests/jenkins_manifests/get_row_api/app_health_check.sh'
+                sh 'scp ${WORKSPACE}/app_health_check.sh root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
+                sh 'ssh root@192.168.0.42 /usr/bin/bash ${JENKINS_MANIFEST_KUBER_HOST}/app_health_check.sh'
             }
         }
     }
