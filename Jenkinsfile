@@ -9,12 +9,12 @@ pipeline {
         }
         stage ('unit tests'){
            steps{
-                sh 'cd /docker_test/venv_jenkins && source venv_jenkins/bin/activate && pytest /var/lib/jenkins/workspace/get_row_api_kubernetes/app/tests.py -v'
+                sh 'cd /docker_test/venv_jenkins && source venv_jenkins/bin/activate && pytest /var/lib/jenkins/workspace/${JOB_NAME}/app/tests.py -v'
            }
         }
         stage ('build docker image'){
             steps{
-                sh 'cd /var/lib/jenkins/workspace/get_row_api_kubernetes/ && docker build -t 239534/get_row_api:v${BUILD_NUMBER} -f dockerfile_get_row_api .'
+                sh 'cd /var/lib/jenkins/workspace/${JOB_NAME}/ && docker build -t 239534/get_row_api:v${BUILD_NUMBER} -f dockerfile_get_row_api .'
             }
         }
         stage ('push image to docker registry'){
@@ -27,15 +27,15 @@ pipeline {
         }
         stage ('kubernetes deploy new ver.'){
             steps{
-                sh 'scp /var/lib/jenkins/workspace/get_row_api_kubernetes/get_row_api.yml root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
-                sh 'scp /var/lib/jenkins/workspace/get_row_api_kubernetes/tag_ver_replace.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
+                sh 'scp /var/lib/jenkins/workspace/${JOB_NAME}/get_row_api.yml root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
+                sh 'scp /var/lib/jenkins/workspace/${JOB_NAME}/tag_ver_replace.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
                 sh 'ssh root@192.168.0.42 /usr/bin/bash /kuber_manifests/jenkins_manifests/get_row_api/tag_ver_replace.sh v${BUILD_NUMBER}'
                 sh 'ssh root@192.168.0.42 kubectl apply -f /kuber_manifests/jenkins_manifests/get_row_api/get_row_api.yml'
             }
         }
         stage ('application health test'){
             steps{
-                sh 'scp /var/lib/jenkins/workspace/get_row_api_kubernetes/app_health_check.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
+                sh 'scp /var/lib/jenkins/workspace/${JOB_NAME}/app_health_check.sh root@192.168.0.42:/kuber_manifests/jenkins_manifests/get_row_api/'
                 sh 'ssh root@192.168.0.42 /usr/bin/bash /kuber_manifests/jenkins_manifests/get_row_api/app_health_check.sh'
             }
         }
