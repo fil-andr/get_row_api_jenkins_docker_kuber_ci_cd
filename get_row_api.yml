@@ -29,5 +29,6 @@ spec:
               path: /1
               port: 5000
             initialDelaySeconds: 15
+            periodSeconds: 60
           ports:
             - containerPort: 5000
