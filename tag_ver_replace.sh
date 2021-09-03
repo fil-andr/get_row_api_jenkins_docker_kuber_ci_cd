@@ -1,1 +1,1 @@
-sed -i "s/tagVersion/$1/g" /kuber_manifests/jenkins_manifests/get_row_api/get_row_api.yml
+sed -i "s/tagVersion/$1/g" $(pwd)/get_row_api.yml
