@@ -1,1 +1,1 @@
-sed -i "s/tagVersion/$1/g" $(pwd)/get_row_api.yml
+sed -i "s/tagVersion/$1/g" $(dirname $0)/get_row_api.yml
