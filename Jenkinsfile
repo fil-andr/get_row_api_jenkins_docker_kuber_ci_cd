@@ -31,16 +31,14 @@ pipeline {
         }
         stage ('kubernetes deploy new ver.'){
             steps{
-                sh 'scp ${WORKSPACE}/get_row_api.yml root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
-                sh 'scp ${WORKSPACE}/tag_ver_replace.sh root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
-                sh 'ssh root@192.168.0.42 /usr/bin/bash ${JENKINS_MANIFEST_KUBER_HOST}/tag_ver_replace.sh v${BUILD_NUMBER}'
-                sh 'ssh root@192.168.0.42 kubectl apply -f ${JENKINS_MANIFEST_KUBER_HOST}/get_row_api.yml'
+                sh 'cd ${WORKSPACE} && tag_ver_replace.sh v${BUILD_NUMBER}'
+                sh 'ansible-playbook ${WORKSPACE}/copy_files_get_row_api_ansible.yml -e "path=${JENKINS_MANIFEST_KUBER_HOST}" -e "src_path=${WORKSPACE}"'
+                sh 'ansible-playbook ${WORKSPACE}/get_row_api_kuber_deploy_ansible.yml -e "yml_file_path=${JENKINS_MANIFEST_KUBER_HOST}"'
             }
         }
         stage ('application health test'){
             steps{
-                sh 'scp ${WORKSPACE}/app_health_check.sh root@192.168.0.42:${JENKINS_MANIFEST_KUBER_HOST}/'
-                sh 'ssh root@192.168.0.42 /usr/bin/bash ${JENKINS_MANIFEST_KUBER_HOST}/app_health_check.sh'
+                sh 'ansible-playbook ${WORKSPACE}/health_check_ansible.yml -e "path=${JENKINS_MANIFEST_KUBER_HOST}"'
             }
         }
     }

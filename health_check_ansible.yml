@@ -1,0 +1,17 @@
+---
+- name: make directory and copy file
+  hosts: kuber_hosts
+  become: yes
+
+  vars:
+    path: /kuber_manifests/jenkins_manifests/get_row_api
+
+  tasks:
+
+  - name:  run script healt check app
+    shell: /usr/bin/bash {{ path }}/app_health_check.sh
+    register: result
+
+  - name: check msg
+    debug:
+      msg: "{{ result.stdout }}"
