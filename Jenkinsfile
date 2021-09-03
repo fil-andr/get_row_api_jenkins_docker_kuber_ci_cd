@@ -31,7 +31,7 @@ pipeline {
         }
         stage ('kubernetes deploy new ver.'){
             steps{
-                sh 'cd ${WORKSPACE} && /usr/bin/bash tag_ver_replace.sh v${BUILD_NUMBER}'
+                sh '/usr/bin/bash ${WORKSPACE}/tag_ver_replace.sh v${BUILD_NUMBER}'
                 sh 'ansible-playbook ${WORKSPACE}/copy_files_get_row_api_ansible.yml -e "path=${JENKINS_MANIFEST_KUBER_HOST}" -e "src_path=${WORKSPACE}"'
                 sh 'ansible-playbook ${WORKSPACE}/get_row_api_kuber_deploy_ansible.yml -e "yml_file_path=${JENKINS_MANIFEST_KUBER_HOST}"'
             }
