@@ -46,7 +46,7 @@ class Sss(Resource):
             d = session_postg.query(Company).filter_by(id=id_num).one()
         except sa.exc.NoResultFound:
             return f'no row with id: {id_num}'
-        return f'This is deploy from jenkins pipeline FINAL TEST 02_09_2021_ -  name: {d.name}, salary: {d.salary}  {host_ip}', 200
+        return f'This is deploy from jenkins pipeline FINAL TEST ansible k8s -  name: {d.name}, salary: {d.salary}  {host_ip}', 200
 
 api.add_resource(Sss, "/<int:id_num>")
 
