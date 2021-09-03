@@ -1,0 +1,13 @@
+---
+- name: deploy get row api
+  hosts: kuber_hosts
+  become: yes
+
+  vars:
+    yml_file_path: /kuber_manifests/jenkins_manifests/get_row_api
+
+  tasks:
+    - name: deploy
+      k8s:
+        state: present
+        src: "{{ yml_file_path }}/get_row_api.yml"

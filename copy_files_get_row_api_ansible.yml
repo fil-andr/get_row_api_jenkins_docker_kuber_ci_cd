@@ -1,0 +1,23 @@
+---
+- name: make directory and copy file
+  hosts: kuber_hosts
+  become: yes
+
+  vars:
+    path:  /ansible_directory
+    src_path: /var/lib/jenkins/workspace/get_row_api_kubernetes
+
+  tasks:
+
+  - name:  mkdir
+    file:
+      path:  '{{ path }}'
+      state:  directory
+
+  - name:  copy file
+    copy:
+      src:  '{{ item }}'
+      dest:  '{{ path }}'
+    with_fileglob:
+      - "{{ src_path }}/*.sh"
+      - "{{ src_path }}/*.yml"
