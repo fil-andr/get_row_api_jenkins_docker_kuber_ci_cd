@@ -53,7 +53,7 @@ spec:
           imagePullPolicy: Always
           name: get-row-api
           readinessProbe:
-            periodSeconds: 2
+            periodSeconds: 180
             httpGet:
               path: /1
               port: 5000
