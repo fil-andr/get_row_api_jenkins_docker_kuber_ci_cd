@@ -52,6 +52,11 @@ spec:
               memory: "20Mi"
           imagePullPolicy: Always
           name: get-row-api
+          readinessProbe:
+            periodSeconds: 10
+            httpGet:
+              path: /1
+              port: 5000
           livenessProbe:
             httpGet:
               path: /1
