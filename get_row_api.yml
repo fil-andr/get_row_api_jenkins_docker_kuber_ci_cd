@@ -34,6 +34,7 @@ spec:
     matchLabels:
       app: get-row-api
   replicas: 2
+  minReadySeconds: 15
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -51,11 +52,16 @@ spec:
               memory: "20Mi"
           imagePullPolicy: Always
           name: get-row-api
+          readinessProbe:
+            periodSeconds: 2
+            httpGet:
+              path: /1
+              port: 5000
           livenessProbe:
             httpGet:
               path: /1
               port: 5000
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
             periodSeconds: 60
           ports:
             - containerPort: 5000
