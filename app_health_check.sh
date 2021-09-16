@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 sleep 10
-curl 192.168.49.2:30007/1
+curl $(minikube ip):30007/1
 check_var=$?
 
 if [ $check_var -ne 0 ]
